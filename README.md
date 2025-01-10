@@ -1,9 +1,11 @@
-
 Contact Management System
+
+
 Introduction:
 Efficient management of contacts is essential in daily life, especially when dealing with a growing number of entries.
 The Contact Management System is a Python-based application developed using Flask, offering an easy-to-use interface for managing contact data.
 The system allows users to perform CRUD (Create, Read, Update, Delete) operations and ensures data persistence using JSON files, providing a reliable solution for contact organization.
+
 
 Problem Domain:
 Contact management becomes challenging when:
@@ -25,9 +27,9 @@ File Handling:Reading from and writing to JSON files for data persistence.
 Error Handling:Ensures robustness by managing exceptions such as file not found or invalid input.
 Serialization:Converts data structures to and from JSON format for seamless processing.
 
-Data Structure Use
-Hash Map (Dictionary):
-The contacts are stored in a dictionary, with names as keys and details as values.
+Data Structure Use:
+
+Hash Map (Dictionary):The contacts are stored in a dictionary, with names as keys and details as values.
 This ensures O(1) average time complexity for adding, updating, and searching contacts.
 List:Used to convert the dictionary into a structured JSON format for display purposes.
 
