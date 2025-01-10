@@ -45,7 +45,8 @@ It demonstrates efficient use of Python’s data structures and REST API princip
 providing a solid foundation for future enhancements like database integration and advanced UI/UX features.
 
 
-![image](https://github.com/user-attachments/assets/9c9e03b1-8bfd-40bb-9727-588c0804e413)
+![image](https://github.com/user-attachments/assets/66e55c02-5dc1-4b89-ad85-e10e9ee92a99)
+
 
 
 
