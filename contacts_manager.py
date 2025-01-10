@@ -1,9 +1,9 @@
-# contacts_manager.py
+import json
 
 class ContactsManager:
     def __init__(self):
         self.contacts = {}
-
+        
     def add_contact(self, name, details):
         """Add a new contact."""
         self.contacts[name] = details
@@ -50,7 +50,9 @@ if __name__ == "__main__":
 
         if command == "add":
             name = input("Enter contact name: ")
-            details = input("Enter contact details (e.g., phone number): ")
+            phone_number = input("Enter contact phone number: ")
+            address = input("Enter contact address: ")
+            details = {'phone_number': phone_number, 'address': address}
             manager.add_contact(name, details)
 
         elif command == "delete":
@@ -70,10 +72,26 @@ if __name__ == "__main__":
             manager.display_contacts()
 
         elif command == "exit":
+            manager.save_contacts()  # Save contacts before exiting
             print("Exiting the contact manager.")
             break
 
         else:
             print("Invalid command. Please try again.")
 
-# contacts_manager.py
+    def save_contacts(self):
+        """Save contacts to a JSON file."""
+        with open('contacts.json', 'w') as file:
+            json.dump(self.contacts, file)
+            print("Contacts saved to 'contacts.json'.")
+
+    def load_contacts(self):
+        """Load contacts from a JSON file."""
+        try:
+            with open('contacts.json', 'r') as file:
+                self.contacts = json.load(file)
+                print("Contacts loaded from 'contacts.json'.")
+        except FileNotFoundError:
+            print("No contacts file found. Starting with an empty contact list.")
+        except json.JSONDecodeError:
+            print("Error decoding JSON. Starting with an empty contact list.")
