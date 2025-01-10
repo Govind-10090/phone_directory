@@ -73,6 +73,18 @@ def add_contact():
     message = manager.add_contact(name, {'phone_number': phone_number, 'address': address})
     return jsonify({'message': message})
 
+@app.route('/delete_contact/<name>', methods=['DELETE'])
+def delete_contact(name):
+    message = manager.delete_contact(name)
+    return jsonify({'message': message})
+
+@app.route('/update_contact/<name>', methods=['PUT'])
+def update_contact(name):
+    data = request.get_json()
+    new_details = {'phone_number': data['phone_number'], 'address': data['address']}
+    message = manager.update_contact(name, new_details)
+    return jsonify({'message': message})
+
 @app.route('/search_contact/<name>', methods=['GET'])
 def search_contact(name):
     result = manager.search_contact(name)

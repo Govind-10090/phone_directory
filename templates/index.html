@@ -27,6 +27,20 @@
         <button type="submit">Search</button>
     </form>
 
+    <h2>Update Contact</h2>
+    <form id="updateContactForm">
+        <input type="text" id="updateName" placeholder="Name" required>
+        <input type="text" id="updatePhoneNumber" placeholder="New Phone Number" required>
+        <input type="text" id="updateAddress" placeholder="New Address" required>
+        <button type="submit">Update Contact</button>
+    </form>
+
+    <h2>Delete Contact</h2>
+    <form id="deleteContactForm">
+        <input type="text" id="deleteName" placeholder="Name" required>
+        <button type="submit">Delete Contact</button>
+    </form>
+    
     <h2>Display Contacts</h2>
     <button id="displayContactsButton">Display Contacts</button>
     <div id="contactsList"></div>
@@ -45,13 +59,7 @@
             });
             const result = await response.json();
             const contactsList = document.getElementById('contactsList');
-            if (result.message && typeof result.message === 'object') {
-                const contactName = Object.keys(result.message)[0];
-                const contactDetails = result.message[contactName];
-                contactsList.innerHTML = `<p>${contactName}: Phone - ${contactDetails.phone_number}, Address - ${contactDetails.address}</p>`;
-            } else {
-                contactsList.innerHTML = `<p>${result.message}</p>`;
-            }
+            contactsList.innerHTML = `<p>${result.message}</p>`;
         };
 
         document.getElementById('searchContactForm').onsubmit = async function(event) {
@@ -61,13 +69,35 @@
             const response = await fetch(`/search_contact/${name}`);
             const result = await response.json();
             const contactsList = document.getElementById('contactsList');
-            if (result.message && typeof result.message === 'object') {
-                const contactName = Object.keys(result.message)[0];
-                const contactDetails = result.message[contactName];
-                contactsList.innerHTML = `<p>${contactName}: Phone - ${contactDetails.phone_number}, Address - ${contactDetails.address}</p>`;
-            } else {
-                contactsList.innerHTML = `<p>${result.message}</p>`;
-            }
+            contactsList.innerHTML = `<p>${result.message}</p>`;
+        };
+
+        document.getElementById('updateContactForm').onsubmit = async function(event) {
+            event.preventDefault();
+            const name = document.getElementById('updateName').value;
+            const phone_number = document.getElementById('updatePhoneNumber').value;
+            const address = document.getElementById('updateAddress').value;
+
+            const response = await fetch(`/update_contact/${name}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone_number, address })
+            });
+            const result = await response.json();
+            const contactsList = document.getElementById('contactsList');
+            contactsList.innerHTML = `<p>${result.message}</p>`;
+        };
+
+        document.getElementById('deleteContactForm').onsubmit = async function(event) {
+            event.preventDefault();
+            const name = document.getElementById('deleteName').value;
+
+            const response = await fetch(`/delete_contact/${name}`, {
+                method: 'DELETE'
+            });
+            const result = await response.json();
+            const contactsList = document.getElementById('contactsList');
+            contactsList.innerHTML = `<p>${result.message}</p>`;
         };
 
         document.getElementById('displayContactsButton').onclick = async function() {
