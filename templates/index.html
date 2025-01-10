@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacts Manager</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        form { margin-bottom: 20px; }
+        input { margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Contacts Manager</h1>
+    
+    <h2>Add Contact</h2>
+    <form id="addContactForm">
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="text" id="phone_number" placeholder="Phone Number" required>
+        <input type="text" id="address" placeholder="Address" required>
+        <button type="submit">Add Contact</button>
+    </form>
+
+    <h2>Search Contact</h2>
+    <form id="searchContactForm">
+        <input type="text" id="searchName" placeholder="Name" required>
+        <button type="submit">Search</button>
+    </form>
+
+    <h2>Display Contacts</h2>
+    <button id="displayContactsButton">Display Contacts</button>
+    <div id="contactsList"></div>
+
+    <script>
+        document.getElementById('addContactForm').onsubmit = async function(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const phone_number = document.getElementById('phone_number').value;
+            const address = document.getElementById('address').value;
+
+            const response = await fetch('/add_contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, phone_number, address })
+            });
+            const result = await response.json();
+            const contactsList = document.getElementById('contactsList');
+            if (result.message && typeof result.message === 'object') {
+                const contactName = Object.keys(result.message)[0];
+                const contactDetails = result.message[contactName];
+                contactsList.innerHTML = `<p>${contactName}: Phone - ${contactDetails.phone_number}, Address - ${contactDetails.address}</p>`;
+            } else {
+                contactsList.innerHTML = `<p>${result.message}</p>`;
+            }
+        };
+
+        document.getElementById('searchContactForm').onsubmit = async function(event) {
+            event.preventDefault();
+            const name = document.getElementById('searchName').value;
+
+            const response = await fetch(`/search_contact/${name}`);
+            const result = await response.json();
+            const contactsList = document.getElementById('contactsList');
+            if (result.message && typeof result.message === 'object') {
+                const contactName = Object.keys(result.message)[0];
+                const contactDetails = result.message[contactName];
+                contactsList.innerHTML = `<p>${contactName}: Phone - ${contactDetails.phone_number}, Address - ${contactDetails.address}</p>`;
+            } else {
+                contactsList.innerHTML = `<p>${result.message}</p>`;
+            }
+        };
+
+        document.getElementById('displayContactsButton').onclick = async function() {
+            const response = await fetch('/display_contacts');
+            const contacts = await response.json();
+            const contactsList = document.getElementById('contactsList');
+            contactsList.innerHTML = contacts.map(contact => `<p>${contact.name}: Phone - ${contact.details.phone_number}, Address - ${contact.details.address}</p>`).join('');
+        };
+    </script>
+</body>
+</html>
