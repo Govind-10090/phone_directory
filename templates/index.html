@@ -52,24 +52,57 @@
             const phone_number = document.getElementById('phone_number').value;
             const address = document.getElementById('address').value;
 
+        try {
             const response = await fetch('/add_contact', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, phone_number, address })
             });
+            
             const result = await response.json();
             const contactsList = document.getElementById('contactsList');
-            contactsList.innerHTML = `<p>${result.message}</p>`;
+            
+            if (response.ok) {
+                contactsList.innerHTML = `<p style="color: green;">${result.message}</p>`;
+            } else {
+                contactsList.innerHTML = `<p style="color: red;">Error: ${result.error || 'Failed to add contact'}</p>`;
+            }
+        } catch (error) {
+            const contactsList = document.getElementById('contactsList');
+            contactsList.innerHTML = `<p style="color: red;">Network error: Please try again later</p>`;
+        }
+
         };
 
         document.getElementById('searchContactForm').onsubmit = async function(event) {
             event.preventDefault();
             const name = document.getElementById('searchName').value;
 
+        try {
             const response = await fetch(`/search_contact/${name}`);
             const result = await response.json();
             const contactsList = document.getElementById('contactsList');
-            contactsList.innerHTML = `<p>${result.message}</p>`;
+            
+            if (response.ok) {
+                if (typeof result.message === 'object') {
+                    const contact = result.message;
+                    contactsList.innerHTML = `
+                        <p style="color: green;">
+                            Found: ${Object.keys(contact)[0]} - 
+                            Phone: ${contact[Object.keys(contact)[0]].phone_number}, 
+                            Address: ${contact[Object.keys(contact)[0]].address}
+                        </p>`;
+                } else {
+                    contactsList.innerHTML = `<p style="color: orange;">${result.message}</p>`;
+                }
+            } else {
+                contactsList.innerHTML = `<p style="color: red;">Error: ${result.error || 'Failed to search contact'}</p>`;
+            }
+        } catch (error) {
+            const contactsList = document.getElementById('contactsList');
+            contactsList.innerHTML = `<p style="color: red;">Network error: Please try again later</p>`;
+        }
+
         };
 
         document.getElementById('updateContactForm').onsubmit = async function(event) {
@@ -78,33 +111,77 @@
             const phone_number = document.getElementById('updatePhoneNumber').value;
             const address = document.getElementById('updateAddress').value;
 
+        try {
             const response = await fetch(`/update_contact/${name}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ phone_number, address })
             });
+            
             const result = await response.json();
             const contactsList = document.getElementById('contactsList');
-            contactsList.innerHTML = `<p>${result.message}</p>`;
+            
+            if (response.ok) {
+                contactsList.innerHTML = `<p style="color: green;">${result.message}</p>`;
+            } else {
+                contactsList.innerHTML = `<p style="color: red;">Error: ${result.error || 'Failed to update contact'}</p>`;
+            }
+        } catch (error) {
+            const contactsList = document.getElementById('contactsList');
+            contactsList.innerHTML = `<p style="color: red;">Network error: Please try again later</p>`;
+        }
+
         };
 
         document.getElementById('deleteContactForm').onsubmit = async function(event) {
             event.preventDefault();
             const name = document.getElementById('deleteName').value;
 
+        try {
             const response = await fetch(`/delete_contact/${name}`, {
                 method: 'DELETE'
             });
+            
             const result = await response.json();
             const contactsList = document.getElementById('contactsList');
-            contactsList.innerHTML = `<p>${result.message}</p>`;
+            
+            if (response.ok) {
+                contactsList.innerHTML = `<p style="color: green;">${result.message}</p>`;
+            } else {
+                contactsList.innerHTML = `<p style="color: red;">Error: ${result.error || 'Failed to delete contact'}</p>`;
+            }
+        } catch (error) {
+            const contactsList = document.getElementById('contactsList');
+            contactsList.innerHTML = `<p style="color: red;">Network error: Please try again later</p>`;
+        }
+
         };
 
         document.getElementById('displayContactsButton').onclick = async function() {
+        try {
             const response = await fetch('/display_contacts');
             const contacts = await response.json();
             const contactsList = document.getElementById('contactsList');
-            contactsList.innerHTML = contacts.map(contact => `<p>${contact.name}: Phone - ${contact.details.phone_number}, Address - ${contact.details.address}</p>`).join('');
+            
+            if (response.ok) {
+                if (contacts.length > 0) {
+                    contactsList.innerHTML = contacts.map(contact => `
+                        <p style="color: blue;">
+                            ${contact.name}: 
+                            Phone - ${contact.details.phone_number}, 
+                            Address - ${contact.details.address}
+                        </p>`).join('');
+                } else {
+                    contactsList.innerHTML = `<p style="color: orange;">No contacts found</p>`;
+                }
+            } else {
+                contactsList.innerHTML = `<p style="color: red;">Error: Failed to load contacts</p>`;
+            }
+        } catch (error) {
+            const contactsList = document.getElementById('contactsList');
+            contactsList.innerHTML = `<p style="color: red;">Network error: Please try again later</p>`;
+        }
+
         };
     </script>
 </body>
